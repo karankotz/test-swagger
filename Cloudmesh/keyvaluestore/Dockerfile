@@ -1,40 +1,37 @@
-FROM ubuntu:16.04
-MAINTAINER Karan Kotabagi <kkotbag@iu.edu>
+FROM ubuntu:latest
+MAINTAINER Karan Kotabagi "kkotbag@iu.edu"
+RUN apt-get update -y
+RUN apt-get install -y python-pip python-dev build-essential
+RUN apt-get install -y vim
+RUN apt-get install -y default-jdk
+RUN apt-get update -y
+COPY . /app
+WORKDIR /app
+RUN pip install psutil
+RUN pip install --upgrade pip
+RUN apt-get install wget
 
-RUN apt-get update -q && apt-get install -qy \
-	build-essential \
-	python-dev \
-	python-pip \
-	libssl-dev \
-	wget \
-	curl \
-	emacs \
-	git-core \
-	default-jre \
-	software-properties-common -y
+RUN wget https://www.dropbox.com/s/0730xoz8rboes7b/swagger-codegen-cli-2.3.1.jar
 
-	RUN apt-get install -q -y net-tools
+RUN java -jar /app/swagger-codegen-cli-2.3.1.jar generate -i /app/keyval.yaml -l python-flask -o /app/keyvalstore/server/keyvalstore/flaskConnexion -D supportPython2=true
+RUN pip install virtualenv
+RUN virtualenv RESTServer
+RUN /bin/bash -c "source RESTServer/bin/activate"
+RUN pip install -U pip
+RUN cd /
+RUN pwd
+RUN pip install -r /app/keyvalstore/server/keyvalstore/flaskConnexion/requirements.txt
+RUN pwd 
 
-	RUN git clone git://github.com/yyuu/pyenv.git .pyenv
-	RUN git clone https://github.com/yyuu/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+EXPOSE 8080
 
-	ENV HOME  /
-	ENV PYENV_ROOT /.pyenv
-	ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+RUN mv /app/default_controller.py /app/keyvalstore/server/keyvalstore/flaskConnexion/swagger_server/controllers/
 
-	RUN pyenv install 3.6.2
-	RUN pyenv global 3.6.2
-	RUN python -m ensurepip
+RUN mv /app/keyval_stub.py /app/keyvalstore/server/keyvalstore/flaskConnexion/swagger_server/controllers/
 
-	RUN git clone https://github.com/karankotz/test-swagger.git
+RUN pip install requests==1.1.0
+RUN pip install python-firebase
 
-	WORKDIR /test-swagger/cloudmesh/keyvaluestore
+WORKDIR /app/keyvalstore/server/keyvalstore/flaskConnexion/
 
-	RUN wget http://central.maven.org/maven2/io/swagger/swagger-codegen-cli/2.3.1/swagger-codegen-cli-2.3.1.jar
-
-	EXPOSE 8080
-
-	RUN make service 
-
-	CMD ["make", "start"]
-
+ENTRYPOINT ["python","-m", "swagger_server"]
