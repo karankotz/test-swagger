@@ -10,28 +10,21 @@ WORKDIR /app
 RUN pip install psutil
 RUN pip install --upgrade pip
 RUN apt-get install wget
-
-RUN wget https://www.dropbox.com/s/0730xoz8rboes7b/swagger-codegen-cli-2.3.1.jar
-
-RUN java -jar /app/swagger-codegen-cli-2.3.1.jar generate -i /app/keyval.yaml -l python-flask -o /app/keyvalstore/server/keyvalstore/flaskConnexion -D supportPython2=true
-RUN pip install virtualenv
-RUN virtualenv RESTServer
-RUN /bin/bash -c "source RESTServer/bin/activate"
-RUN pip install -U pip
-RUN cd /
-RUN pwd
-RUN pip install -r /app/keyvalstore/server/keyvalstore/flaskConnexion/requirements.txt
-RUN pwd 
+RUN apt-get install sudo
 
 EXPOSE 8080
 
-RUN mv /app/default_controller.py /app/keyvalstore/server/keyvalstore/flaskConnexion/swagger_server/controllers/
+# WORKDIR /app/keyvalstore/server/keyvalstore/flaskConnexion/
 
-RUN mv /app/keyval_stub.py /app/keyvalstore/server/keyvalstore/flaskConnexion/swagger_server/controllers/
+RUN ls
+WORKDIR /app/
 
-RUN pip install requests==1.1.0
-RUN pip install python-firebase
+RUN pwd
 
-WORKDIR /app/keyvalstore/server/keyvalstore/flaskConnexion/
+RUN ls
 
-ENTRYPOINT ["python","-m", "swagger_server"]
+RUN make service 
+
+CMD ["make","start"]
+
+# ENTRYPOINT ["python","-m", "swagger_server"]

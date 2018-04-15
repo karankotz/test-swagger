@@ -12,13 +12,14 @@
 
 	* /api/setkeyvalue
 
-## Options for the Make file 
+## Options for the running the swagger API with the make
 
 * Build and run the docker container and start the service with the following command.
 
-	make docker-all 
+	make docker-start 
 
-* To only build the docker container with the following command 
+* To only build the docker container use the 
+  following command 
 	
 	make docker-build
 
@@ -27,19 +28,46 @@
 	make docker-run
 
 * To pull the docker container locally 
-
+  (if it is pulled make sure to start it 
+  with "make docker-start")
+  
 	make docker-pull
 
-*
+* To test the get API call after running the service
+
+	make test-get
+
+* To test the post API call after running the service
+	
+	make test-post
+
+* To stop the docker container 
+	
+	make docker-stop
+
+* To stop and delete the docker container 
+
+	make docker-deleteall
+
+* To start the service locally
+
+	make all
+
+* To clean the contents locally
+
+	make clean
 
 ## Instructions to run the docker container
 	
 	* The docker pull can be used to run the container 
-	* docker pull karan/swagger 
+	* docker pull karankotz/swagger-firebase 
+	or
+
+	* make docker-pull
 
 ## Clone the Project into a folder and navigate to the directory swagger/Cloudmesh/keyvaluestore
 	
-	make docker-run 
+	make docker-start
 
 ## Testing the dockerized swagger API 
 
@@ -47,8 +75,8 @@
 
 ### Get the keyvaluestore
 
-curl -X GET http://0.0.0.0:8080/api/keyvaluestore
-
+	curl -X GET http://0.0.0.0:8080/api/keyvaluestore
+   
 Example result of the above call:
 
 	{
@@ -97,6 +125,7 @@ Example result of the above call:
 	sudo docker ps
 
 ### Example of the container ID 
+
 	CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
 	536dccdec049        swag3               "python -m swagger_s…"   5 seconds ago       Up 4 seconds        0.0.0.0:8080->8080/tcp   hungry_mahavira
 

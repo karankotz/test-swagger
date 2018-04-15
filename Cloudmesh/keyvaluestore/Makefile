@@ -7,7 +7,7 @@ RESTSERV=RESTServer
 
 all: service start 
 	
-service: 
+service:
 	mkdir $(EXECDIR)
 	chmod 777 $(EXECDIR)
 	wget https://www.dropbox.com/s/0730xoz8rboes7b/swagger-codegen-cli-2.3.1.jar
@@ -37,10 +37,10 @@ start:
 	cd $(EXECDIR) && python -m swagger_server
 	cd ..
 
-testGet: 
+test-get: 
 	curl http://0.0.0.0:8080/api/keyvaluestore 
 
-testPost:
+test-post:
 	curl -X POST http://0.0.0.0:8080/api/setkeyvalue?key=drive4
 
 docker-start: docker-build docker-run
@@ -53,6 +53,9 @@ docker-run:
 
 docker-stop:
 	sudo docker stop $$(sudo docker ps -alq)
+
+docker-pull:
+	sudo docker pull karankotz/swagger-firebase
 
 docker-delete:
 	sudo docker rmi -f karankotz/swagger-firebase
