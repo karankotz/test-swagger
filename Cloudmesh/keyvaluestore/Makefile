@@ -31,18 +31,33 @@ service:
 
 	cd $(EXECDIR) && sudo pip install -r requirements.txt
 
-start: 
+	cd ..
+
+start:
 	cd $(EXECDIR) && python -m swagger_server
+	cd ..
 
 testGet: 
 	curl http://0.0.0.0:8080/api/keyvaluestore 
 
 testPost:
-	curl -X POST http://0.0.0.0:8080/api/setkeyvalue?key=drive1
+	curl -X POST http://0.0.0.0:8080/api/setkeyvalue?key=drive4
 
-container:
-	sudo docker build -t swagger:latest
-	sudo docker run -d -p 8080:8080 swagger
+docker-start: docker-build docker-run
+
+docker-build:
+	sudo docker build -t karankotz/swagger-firebase:latest .
+
+docker-run:
+	sudo docker run -d -p 8080:8080 karankotz/swagger-firebase
+
+docker-stop:
+	sudo docker stop $$(sudo docker ps -alq)
+
+docker-delete:
+	sudo docker rmi -f karankotz/swagger-firebase
+
+docker-deleteall: docker-stop docker-delete
 
 clean: 
 		sudo rm -rf $(OUTPUT)
